@@ -1,0 +1,19 @@
+# lora_receiver for esp8266 and convert to mqtt to use for home assistant
+
+import socket
+import struct
+import time
+import json
+import paho.mqtt.client as mqtt
+
+
+def on_connect(client, userdata, flags, rc):
+    print(f"Connected with result code {rc}")
+
+def on_message(client, userdata, msg):
+    print(f"Received message '{msg.topic}': {msg.payload}")
+
+def on_publish(client, userdata, mid):
+    print(f"Message {mid} published.")
+    
+        
