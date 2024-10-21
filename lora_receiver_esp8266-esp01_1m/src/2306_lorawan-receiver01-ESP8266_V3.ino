@@ -1,7 +1,3 @@
-// Version 3.0 - Code updates:
-// - Added separate MQTT topic for ADC readings
-// - Improved parsing and handling of incoming data from LoRa
-
 #include <SoftwareSerial.h>
 #include "arduino_secrets.h"
 #define LED 2  // Avoiding pin conflict by using pin 2 for LED
@@ -18,14 +14,15 @@ SoftwareSerial lora(12, 14); // LoRa serial communication on pins 12 (TX) and 14
 const char *WIFI_SSID = SECRET_SSID;
 const char *WIFI_PASSWORD = SECRET_PWD;
 
-const char *MQTT_HOST = "192.168.1.13";
+const char *MQTT_HOST = "192.168.1.145";
 const int MQTT_PORT = 1883;
 const char *MQTT_CLIENT_ID = "ESP8266-lorawan01-NodeMCU";
 const char *MQTT_USER = SECRET_MQTUSER;
 const char *MQTT_PASSWORD = SECRET_MQTPW;
-const char *TOPIC_ADC = "lorawan/garden/sensorA0/adc";
-const char *TOPIC_VOLTAGE = "lorawan/garden/sensorA0/voltage";
-const char *TOPIC_CURRENT = "lorawan/garden/sensorA0/current";
+const char *TOPIC_ADC = "lora/rivertunnel/sensorA0/adc";
+const char *TOPIC_VOLTAGE = "lora/rivertunnel/sensorA0/voltage";
+const char *TOPIC_CURRENT = "lora/rivertunnel/sensorA0/current";
+const char *TOPIC_STATUS = "lora/rivertunnel/status";  // New topic for status
 
 WiFiClient client;
 PubSubClient mqttClient(client);
@@ -44,10 +41,11 @@ void setup() {
   Serial.println("Connected to Wi-Fi");
 
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-  while (!client.connected()) {
+  while (!mqttClient.connected()) {
     if (mqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASSWORD)) {
       Serial.println("Connected to MQTT broker");
-      // Subscribe to topics if needed here
+      // Send a message that ESP8266 is online
+      mqttClient.publish(TOPIC_STATUS, "online", true);  // Retained message
     } else {
       delay(500);
       Serial.print(".");

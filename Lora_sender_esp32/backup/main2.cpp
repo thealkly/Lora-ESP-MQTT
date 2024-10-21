@@ -46,14 +46,15 @@ void setup() {
 }
 
 void loop() {
-  // Auslesen des ADC-Wertes
-  ADC1Value = adc1_get_raw(ADC1_CHANNEL_6);
+  // Auslesen des ADC-Wertes;
+  //ADC1Value = adc1_get_raw(ADC1_CHANNEL_6);
+  ADC1Value = 5;
   Serial.print("ADC Value: ");
   Serial.println(ADC1Value);
   // length(analogRead01)
   lora.println("AT+SEND=" + lora_RX_address + ",3," + String(ADC1Value)); // AT+SEND=1,2,LO
   Serial.println("Daten gesendet");
   delay(5000); // 5 Sekunden warten
-   Serial.println("Start deep sleep now...");
-   goToSleep();
+//   Serial.println("Start deep sleep now...");
+//   goToSleep();
 }
